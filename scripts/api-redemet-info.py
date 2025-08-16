@@ -43,13 +43,11 @@ if not api_key:
 # Com informações meteorológicas de aerodromos
 # Note que esse não contém correções, então pode haver inacurácia com os METARs
 def extrair_ur():
-    arq_temp = ".temp-ur"
-    arq_temp_log = ".temp-ur.log"
     # Transforma date em datetime (combinando com time à meia noite)
     # Inicia de onde parou o arquivo temporário
     cont = 0
-    if exists(arq_temp):
-        with open(arq_temp, 'r') as arqin:
+    if exists(arq_result):
+        with open(arq_result, 'r') as arqin:
             linha_final = ''
             for linha in arqin:
                 if linha != '\n':
@@ -58,7 +56,12 @@ def extrair_ur():
                     pass
             if linha_final:
                 dt_meio = dt.strptime(linha_final.split(',')[0], dt_pstr_comp)
+                # Soma uma hora
+                dt_meio += datetime.timedelta(hours=1)
     else:
+        # Cria arquivo com header
+        with open(arq_result, 'a') as arqin:
+            arqin.write('datetime,umidade-relativa\n')
         dt_meio = dt.combine(data_ini, dt.min.time())
     dt_ini = dt.combine(data_ini, dt.min.time())
     dt_fim = dt.combine(data_fim, dt.min.time())
@@ -67,13 +70,12 @@ def extrair_ur():
     cont_max = (dt_fim - dt_ini).days * 24
 
     while dt_meio < dt_fim:
-        # Esse mais 1 dia é para evitar duplicagem em cada loop
-        dt_meio += datetime.timedelta(hours=1)
+        # Esse mais 1 hora ia é para evitar duplicagem em cada loop
         if dt_meio > dt_fim:
             dt_meio = dt_fim
 
         # 0. Comando atual
-        data_meio_str = dt_meio.strftime(dt_pstr + "23")
+        data_meio_str = dt_meio.strftime(dt_pstr + "%H")
 
         # Prints
         print(f"Pegando dados de {dt_meio}...",end=" ")
@@ -86,48 +88,43 @@ def extrair_ur():
         # Passo 1 - curl (dados em json)
         _curl = sp.run(cmd, capture_output=True, text=True)
 
+        _ur_dt = str(dt_meio)
+
         # Passo 2 - json
         data = json.loads(_curl.stdout)
 
-        # Passo 3 - pega as mensagens
-        _ur_dt = str(dt_meio)
         try:
-            _ur = data['data']['ur']
-
+            # Passo 3 - mensagens
+            if 'ur' in data['data']:
+                _ur = data['data']['ur']
+            else:
+                _ur = 'NA'
+        except Exception as e:
+            print(data)
+            exit(1)
+        
+        try:
             # Passo 4 - tratamento e normalização
             _ur_val: str = _ur.split("%")[0]
         except Exception as e:
             err_str = f"ERRO: {e}\n"
             print(err_str, end="")
             _ur_val = 'NA'
-            with open(arq_temp_log, 'a') as arqout:
+            with open(arq_log, 'a') as arqout:
                 arqout.write((_ur_dt + ',' + _ur_val + '\n'))
         if _ur_val.isnumeric():
             _ur_norm = str(int(_ur.split("%")[0])/100)
         else:
-            with open(arq_temp_log, 'a') as arqout:
+            with open(arq_log, 'a') as arqout:
                 arqout.write((_ur_dt + ',' + _ur_val + '\n'))
             _ur_norm = 'NA'
-
-        # Adiciona a um arquivo temporário, para caso haja algum problema
-        # Não se iniciar do zero
-        with open(arq_temp, 'a') as arqout:
+    
+        with open(arq_result, 'a') as arqout:
             arqout.write((_ur_dt + ',' + _ur_norm + '\n'))
         linhas_brutas.extend([[_ur_norm]])
         cont += 1
+        dt_meio += datetime.timedelta(hours=1)
+
     return linhas_brutas
 
-# todas as linhas coletadas com o wget
-linhas_csv = ['datetime','umidade-relativa' + '\n']
-
-linhas_csv.extend(extrair_ur())
-print(linhas_csv)
-print("Sucesso!")
-print("Criando arquivo .csv e de log...")
-## Passo 4 - Arquivos finais
-with open(arq_result, 'w', encoding='utf-8') as arqout:
-    arqout.writelines(linhas_csv)
-
-if log_list:
-    with open(arq_log, 'w', encoding='utf-8') as arqout:
-        arqout.writelines(log_list)
+extrair_ur()

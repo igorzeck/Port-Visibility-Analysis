@@ -28,8 +28,8 @@ data_ini_str = data_ini.strftime(dt_pstr + "00")
 data_fim_str = data_fim.strftime(dt_pstr + "23")
 
 # Arquivo
-arq_result=f"metar-{localidade}-{data_ini.strftime(dt_pstr_data)}-{data_fim.strftime(dt_pstr_data)}.csv"
-arq_log=f"metar-{localidade}-{data_ini.strftime(dt_pstr_data)}-{data_fim.strftime(dt_pstr_data)}.log"
+arq_result=f"../datasets/metar-{localidade}-{data_ini.strftime(dt_pstr_data)}-{data_fim.strftime(dt_pstr_data)}.csv"
+arq_log=f"../datasets/metar-{localidade}-{data_ini.strftime(dt_pstr_data)}-{data_fim.strftime(dt_pstr_data)}.log"
 
 colunas = [
     "datetime",  # UTC - 0
@@ -40,8 +40,7 @@ colunas = [
     "velocidade_vento(m/s)",
     "dir-vento(graus)",
     "vis(m)",
-    "pressao(mb)",
-    "umidade-relativa"
+    "pressao(mb)"
 ]
 
 log_list = []
@@ -81,7 +80,6 @@ def decod_metar(linhas: list[str]):
                     report.station_id or "",
                     str(report.temp.value("C")) if report.temp else "",
                     str(report.dewpt.value("C")) if report.dewpt else "",
-                    str(report.rel_umidity.value()) if report.rel_umidity else "",
                     str(report.wind_speed.value("mps")) if report.wind_speed else "",
                     str(report.wind_dir.value()) if report.wind_dir else "",
                     str(report.vis.value("m")) if report.vis else "",
@@ -93,8 +91,9 @@ def decod_metar(linhas: list[str]):
                 linhas_filtradas.append(",".join(parts) + "\n")
                 ultimo_timestamp = timestamp_final
             except Exception as e:
+                print(e, end="|")
                 err_str = f"ERRO ao decodar o METAR: {metar_str}\n"
-                linhas_filtradas.append(['NA']) # Para manter coesão temporal
+                linhas_filtradas.append(','.join(['NA'] * len(colunas)) + '\n')
                 print(err_str, end="")
                 log_list.append(err_str)
         else:
@@ -105,18 +104,20 @@ def decod_metar(linhas: list[str]):
 
 # -- Extração --
 def extrair_metar():
-    data_meio = data_ini
+    # Esse menos 1 dia é para o loop ser inclusivo em data de início e fim
+    data_meio = data_ini - datetime.timedelta(1)
     linhas_brutas = []
     intervalo_horas=8700
     intervalo=datetime.timedelta(hours=intervalo_horas) # Máximo de entradas é 8760 permitidas em uma chamada...
     cont = 0
     cont_max = (data_fim - data_ini) / intervalo
-
+    if cont_max == 0:
+        cont_max = 1
 
     while data_meio < data_fim:
         # Esse mais 1 dia é para evitar duplicagem em cada loop
         data_meio_ant = data_meio + datetime.timedelta(1)
-        data_meio += intervalo
+        data_meio = data_meio_ant + intervalo
         if data_meio > data_fim:
             data_meio = data_fim
 
@@ -135,6 +136,7 @@ def extrair_metar():
             cmd = ['curl',
                 '',
                     url_metar]
+
             # Passo 1 - curl (dados em json)
             _curl = sp.run(cmd, capture_output=True, text=True)
 
