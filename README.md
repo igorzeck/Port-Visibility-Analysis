@@ -4,7 +4,9 @@ Este é um repositório público contendo os contextos, scripts e datasets final
 
 ## Requisitos
 
-Para os scripts do REDEMET é necessário uma chave API que pode ser solicitada [aqui](https://api-redemet.decea.mil.br/cadastro-api/). Além disso, os scripts e arquivos de análise ASSUMEM QUE OS *DATASETS* ESTÃO EM SUAS MESMAS PASTAS.
+Para os scripts do REDEMET é necessário uma chave API que pode ser solicitada [aqui](https://api-redemet.decea.mil.br/cadastro-api/).
+
+Os arquivos podem ser rodados com a inclusão da chave API no arquivo scripts/api-key.txt no diretório raiz.
 
 Mais informações em relação a API REDEMET em específico podem ser encontradas [aqui](https://ajuda.decea.mil.br/base-de-conhecimento/api-redemet-o-que-e/)
 
