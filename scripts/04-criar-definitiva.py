@@ -6,7 +6,7 @@ import numpy as np
 # - Extração -
 df_lmlt = pd.read_csv('datasets/lmlt-galeao.csv', dtype={'data':'object','hora':'object'})
 df_info = pd.read_csv('datasets/info-SBGL-2011-01-01-2025-08-11.csv', parse_dates=['datetime'], index_col=0)
-df_metar = pd.read_csv('datasets/metar-SBGL-2011-01-01-2025-08-15.csv', parse_dates=['datetime'], index_col=0)
+df_metar = pd.read_csv('datasets/metar-SBGL-2011-01-01-2025-08-11.csv', parse_dates=['datetime'], index_col=0)
 
 # - Limpeza e transformações -
 df_metar.drop(['tipo-report', 'id-estacao'], axis=1, inplace=True)
@@ -34,4 +34,8 @@ for col in df_exp.select_dtypes(include=np.number).columns:
     df_exp[col] = df_exp[col].round(2)
 
 # - Exportação -
+print("Arquivo sendo exportando...")
+
 df_exp.to_csv('datasets/dataset-definitivo.csv')
+
+print("Arquivo exportado com sucesso!")

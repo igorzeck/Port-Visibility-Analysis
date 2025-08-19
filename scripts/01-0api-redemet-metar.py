@@ -5,11 +5,11 @@
 # LOG contendo os METARS que não puderam ser decodificados
 import subprocess as sp
 import json
-# from metar.Metar import Metar
+from metar.Metar import Metar
 import datetime
 from datetime import datetime as dt
 from math import ceil
-from os.path import isfile
+from os.path import isfile, join
 
 # Chave fornecida pelo DECEA (Necessário solicitar)
 api_key=''
@@ -29,15 +29,15 @@ dt_pstr_comp = "%Y-%m-%d %H:%M:%S"
 
 # Parâmetros modificáveis
 data_ini = datetime.date(2011, 1, 1)
-data_fim = datetime.date(2025, 8, 11)
+data_fim = datetime.date(2025, 8, 15)
 localidade='SBGL'
 
 data_ini_str = data_ini.strftime(dt_pstr + "00")
 data_fim_str = data_fim.strftime(dt_pstr + "23")
 
 # Arquivo
-arq_result=f"../datasets/metar-{localidade}-{data_ini.strftime(dt_pstr_data)}-{data_fim.strftime(dt_pstr_data)}.csv"
-arq_log=f"../datasets/metar-{localidade}-{data_ini.strftime(dt_pstr_data)}-{data_fim.strftime(dt_pstr_data)}.log"
+arq_result=join('datasets', f"metar-{localidade}-{data_ini.strftime(dt_pstr_data)}-{data_fim.strftime(dt_pstr_data)}.csv")
+arq_log=join('datasets', f"metar-{localidade}-{data_ini.strftime(dt_pstr_data)}-{data_fim.strftime(dt_pstr_data)}.log")
 
 colunas = [
     "datetime",  # UTC - 0
@@ -96,7 +96,7 @@ def decod_metar(linhas: list[str]):
             except Exception as e:
                 print(e, end="|")
                 err_str = f"ERRO ao decodar o METAR: {metar_str}\n"
-                linhas_filtradas.append(','.join(['NA'] * len(colunas)) + '\n')
+                linhas_filtradas.append(f"{timestamp_final}," + ','.join(['NA'] * (len(colunas) - 1)) + '\n')
                 print(err_str, end="")
                 log_list.append(err_str)
         else:
@@ -158,7 +158,7 @@ def extrair_metar():
             else:
                 print(f"Erro {_curl.stderr}")
                 break # Prossegue com o resto do script até a data que conseguiu capturar
-    cont += 1
+        cont += 1
     return linhas_brutas
 
 
