@@ -75,4 +75,6 @@ A aplicação desse preenchimento de dados também resolve outros dois problema,
 
 As análises, assim como constam em arquivo .jpynb estão na pasta `analise`, sendo necessário para que possam vir a rodar corretamente que o caminho dos datasets sejam corretamente especificados e que as bibliotecas adequadas sejam corretamente instaladas.
 
+[
 **Detalhes da análise em si**
+]
