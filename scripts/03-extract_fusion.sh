@@ -1,7 +1,7 @@
 #!/bin/bash
 # - ATENÇÃO -
 # ESTE CÓDIGO SÓ FUNCIONA EM MÁQUINAS LINUX E ASSUME QUE
-# TODOS OS GRIBS RELANTES ESTEJAM EM SEU DIRETÓRIO
+# TODOS OS GRIBS RELEVANTES ESTEJAM EM SEU DIRETÓRIO
 # - ATENÇÃO -
 # Script para transformar todos Gribs do direitório em um csv
 # Aceita 1 argumento, sendo o nome do arquivo (com extensão)

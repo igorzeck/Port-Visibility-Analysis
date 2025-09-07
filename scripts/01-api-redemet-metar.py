@@ -29,7 +29,7 @@ dt_pstr_comp = "%Y-%m-%d %H:%M:%S"
 
 # Parâmetros modificáveis
 data_ini = datetime.date(2011, 1, 1)
-data_fim = datetime.date(2025, 8, 15)
+data_fim = datetime.date(2025, 8, 11)
 localidade='SBGL'
 
 data_ini_str = data_ini.strftime(dt_pstr + "00")
@@ -64,6 +64,8 @@ def decod_metar(linhas: list[str]):
             timestamp_dt = dt.strptime(timestamp, dt_pstr_comp).strftime(dt_pstr_comp)
             metar_str = metar_raw.rstrip("=")
 
+            timestamp_final = timestamp_dt
+
             # Retira string que indica correção
             is_cor = False
             if " COR" in linha:
@@ -75,8 +77,7 @@ def decod_metar(linhas: list[str]):
                 if report.time:
                     # Report.time só contém dia e hora
                     timestamp_final = dt.strptime(timestamp, "%Y-%m-%d %H:%M:%S").strftime("%Y-%m-") + report.time.strftime("%d %H:%M:%S")
-                else:
-                    timestamp_final = timestamp_dt
+
                 parts = [
                     timestamp_final,
                     report.type if not is_cor else (report.type + " COR"),
