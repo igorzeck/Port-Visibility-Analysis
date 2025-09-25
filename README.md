@@ -16,7 +16,7 @@ Para se executar os scripts (na pasta `scripts`) e coletar os dados desde o iní
 
 Recomenda-se para a execução plena e sem empecilhos dos scripts que essa seja feita em um ambiente com todas as bibliotecas listas no arquivo `requirements.txt` ou, na ausência disso, que se execute em um terminal ligado ao ambiente virtual o seguinte comando: `pip install requirements.txt`.
 
-## Metodologia - Passo a Passo
+## Metodologia - Em geral
 
 Este trabalho é caracterizado como sendo de natureza quantitativa e de carácter exploratório, sendo que para sua realização foram utilizados métodos de Exploratory Data Analysis (EDA) para a coleta e exploração dos dados. A amostra da pesquisa contempla dados meteorológicos referentes ao entorno dos portos marítimos de Santos e, posteriormente,  de Galeão, coletados hora a hora de aeroportos do local e complementadas por uma base de dados contendo estimativas para a variável temperatura da superfície da água. Portanto, os dados amostrais são pontuais e não-probabilísticos.
 Inicialmente, o objeto de pesquisa era o Porto de Santos, de onde os dados seriam coletados e utilizados na aplicação de um posterior modelo Random Forest. Contudo, devido a escassez de dados para o treino do modelo, foi necessária a troca de localidade, que passou a ser o aeroporto de Galeão, estando este assentado em uma local de relativa semelhança à Bacia de Santos.
@@ -75,6 +75,4 @@ A aplicação desse preenchimento de dados também resolve outros dois problema,
 
 As análises, assim como constam em arquivo .jpynb estão na pasta `analise`, sendo necessário para que possam vir a rodar corretamente que o caminho dos datasets sejam corretamente especificados e que as bibliotecas adequadas sejam corretamente instaladas.
 
-[
-**Detalhes da análise em si**
-]
+Este trabalho resultou em 1 artigo publicado, e outro pendente de publicação, o link do segundo artigo será eventualmente disponibilizado aqui.
