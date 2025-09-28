@@ -31,8 +31,9 @@ df_exp = df_indexed.join(df_metar, on='datetime', how='outer').join(df_lmlt, on=
 df_exp.set_index('datetime', inplace=True)
 
 # - Transformações finais -
-df_exp.bfill(inplace=True)
-df_exp.dropna(inplace=True)
+# O Bfill não é bom para os dados! Random Forest é pontual
+# df_exp.bfill(inplace=True)
+# df_exp.dropna(inplace=True)
 
 df_exp.rename({'velocidade_vento(m/s)':'velocidade-vento(mps)', 'ponto_orvalho(c)':'ponto-orvalho(c)'}, axis=1, inplace=True)
 
