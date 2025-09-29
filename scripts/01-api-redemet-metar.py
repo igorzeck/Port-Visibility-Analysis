@@ -75,7 +75,7 @@ def decod_metar(linhas: list[str]):
                 report = Metar(metar_str, strict = True) # Poderia pegar Warnings também!
             except Exception as e:
                 err_str = f"{timestamp_final} | ERRO ao decodar o METAR: {metar_str} | {e}\n"
-                linhas_filtradas.append(f"{timestamp_final}," + ','.join(['NA'] * (len(colunas) - 1)) + '\n')
+                # linhas_   filtradas.append(f"{timestamp_final}," + ','.join(['NA'] * (len(colunas) - 1)) + '\n')
                 log_list.append(err_str)
                 
                 # Tenta de novo
