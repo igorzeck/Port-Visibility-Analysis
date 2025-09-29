@@ -5,8 +5,8 @@
 # LOG contendo os METARS que não puderam ser decodificados
 import subprocess as sp
 import json
-from metar.Metar import Metar
 import datetime
+from metar.Metar import Metar
 from datetime import datetime as dt
 from math import ceil
 from os.path import isfile, join
@@ -72,34 +72,36 @@ def decod_metar(linhas: list[str]):
                 metar_str = metar_str.replace(" COR", "")
                 is_cor = True
             try:
-                report = Metar(metar_str)
-                # Hora do report
-                if report.time:
-                    # Report.time só contém dia e hora
-                    timestamp_final = dt.strptime(timestamp, "%Y-%m-%d %H:%M:%S").strftime("%Y-%m-") + report.time.strftime("%d %H:%M:%S")
-
-                parts = [
-                    timestamp_final,
-                    report.type if not is_cor else (report.type + " COR"),
-                    report.station_id or "",
-                    str(report.temp.value("C")) if report.temp else "",
-                    str(report.dewpt.value("C")) if report.dewpt else "",
-                    str(report.wind_speed.value("mps")) if report.wind_speed else "",
-                    str(report.wind_dir.value()) if report.wind_dir else "",
-                    str(report.vis.value("m")) if report.vis else "",
-                    str(report.press.value("mb")) if report.press else "",
-                ]
-                # Mantém apenas os corrigidos
-                if is_cor and (ultimo_timestamp == timestamp_final):
-                    linhas_filtradas.pop()
-                linhas_filtradas.append(",".join(parts) + "\n")
-                ultimo_timestamp = timestamp_final
+                report = Metar(metar_str, strict = True) # Poderia pegar Warnings também!
             except Exception as e:
-                print(e, end="|")
-                err_str = f"ERRO ao decodar o METAR: {metar_str}\n"
+                err_str = f"{timestamp_final} | ERRO ao decodar o METAR: {metar_str} | {e}\n"
                 linhas_filtradas.append(f"{timestamp_final}," + ','.join(['NA'] * (len(colunas) - 1)) + '\n')
-                print(err_str, end="")
                 log_list.append(err_str)
+                
+                # Tenta de novo
+                # Campos não obtidos voltam vazios
+                report = Metar(metar_str, strict = False)
+            # Hora do report
+            if report.time:
+                # Report.time só contém dia e hora
+                timestamp_final = dt.strptime(timestamp, "%Y-%m-%d %H:%M:%S").strftime("%Y-%m-") + report.time.strftime("%d %H:%M:%S")
+
+            parts = [
+                timestamp_final,
+                report.type if not is_cor else (report.type + " COR"),
+                report.station_id or "",
+                str(report.temp.value("C")) if report.temp else "",
+                str(report.dewpt.value("C")) if report.dewpt else "",
+                str(report.wind_speed.value("mps")) if report.wind_speed else "",
+                str(report.wind_dir.value()) if report.wind_dir else "",
+                str(report.vis.value("m")) if report.vis else "",
+                str(report.press.value("mb")) if report.press else "",
+            ]
+            # Mantém apenas os corrigidos
+            if is_cor and (ultimo_timestamp == timestamp_final):
+                linhas_filtradas.pop()
+            linhas_filtradas.append(",".join(parts) + "\n")
+            ultimo_timestamp = timestamp_final
         else:
             err_str = f"Linha sem METAR ou SPECI: {metar_str}\n"
             print(err_str, end="")
