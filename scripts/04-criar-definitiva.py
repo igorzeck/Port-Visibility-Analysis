@@ -2,6 +2,7 @@
 # - Importações -
 import pandas as pd
 import numpy as np
+from sklearn.preprocessing import StandardScaler
 
 # - Extração -
 df_lmlt = pd.read_csv('datasets/lmlt-galeao.csv', dtype={'data':'object','hora':'object'})
@@ -37,6 +38,10 @@ df_exp.set_index('datetime', inplace=True)
 
 df_exp.rename({'velocidade_vento(m/s)':'velocidade-vento(mps)', 'ponto_orvalho(c)':'ponto-orvalho(c)'}, axis=1, inplace=True)
 
+# Normalização dos dados
+scaler = StandardScaler()
+df_exp_norm = pd.DataFrame(scaler.fit_transform(df_exp), columns=df_exp.columns, index=df_exp.index)
+
 # Arredondamento
 for col in df_exp.select_dtypes(include=np.number).columns:
     df_exp[col] = df_exp[col].round(2)
@@ -44,6 +49,7 @@ for col in df_exp.select_dtypes(include=np.number).columns:
 # - Exportação -
 print("Arquivo sendo exportando...")
 
-df_exp.to_csv('datasets/dataset-definitivo.csv')
+df_exp.to_csv('datasets/dataset-definitivo-legacy.csv')
+df_exp_norm.to_csv('datasets/dataset-definitivo.csv')
 
 print("Arquivo exportado com sucesso!")
