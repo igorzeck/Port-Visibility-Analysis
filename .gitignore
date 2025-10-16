@@ -1,3 +1,5 @@
 !.gitignore
 .*
 api-key.txt
+*.Rproj*
+.Rproj.user
