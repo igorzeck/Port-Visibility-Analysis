@@ -58,3 +58,25 @@ df_j2 |>
   relocate(ppv_nevoa) |> 
   view()
 # Aparenta ter uma performance melhor, mas demanda mais dados
+
+# 3. Arquivo com tamanho árvores aleatório e tam 50/50 ----
+df_j3 <- read_csv("exploracao/arq-j3-tam-ntrees.csv")
+
+str(df_j3)
+
+df_j3 |> 
+  arrange(desc(ppv_nevoa)) |> 
+  relocate(ppv_nevoa) |> 
+  view()
+# Aparente ter ótimos resultados, na realidade! Dar uma olhada nas classes
+# mais importantes poderia ser uma boa
+
+# 4. Arquivo com regressão e tam 50/50----
+df_j4 <- read_csv("exploracao/arq-j4-tam-ntrees.csv")
+
+str(df_j4)
+
+df_j4 |> 
+  arrange(desc(Rsquared_teste)) |> 
+  relocate(Rsquared_teste) |> 
+  view()
