@@ -66,7 +66,7 @@ for (nt in seq(1, total_trees, step_trees)) {
                        metric = "RMSE",
                        importance = "permutation",
                        # Define um número robusto de árvores
-                       num.trees = 500)
+                       num.trees = nt)
   
   toc(log = TRUE, quiet = TRUE)
   log_list <- tic.log(format = FALSE)

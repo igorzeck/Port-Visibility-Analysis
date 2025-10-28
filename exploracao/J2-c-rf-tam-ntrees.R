@@ -1,5 +1,6 @@
 # Teste para tamanho E ntrees variável ----
 # Teste com modelo binário
+# Seleção de dados por amostragem
 # Sem lag de visbilide
 # ---- 1. Setup ----
 source("libs.R")

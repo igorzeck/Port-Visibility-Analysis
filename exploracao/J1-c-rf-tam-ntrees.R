@@ -57,6 +57,7 @@ control <- trainControl(
 # Ao menos 1 ano
 ano_periodo <- year(df$datetime[nrow(df) - 1]) - year(df$datetime[1])
 min_percent <- ceiling(nrow(df) / (nrow(df) / ano_periodo)) / 100
+# Um min_percent melhor seria 1 / ano_periodo!
 max_percent <- 1 - min_percent
 step_percent <- 0.1
 
@@ -67,8 +68,9 @@ total_horas <- 24
 step_horas <- 3
 
 iter_atual <- 1
-iter_total <- floor(1 / step_percent * total_trees / step_trees * total_horas / step_horas)
-
+iter_total <- floor((max_percent - min_percent) / step_percent * total_trees / step_trees * total_horas / step_horas)
+length(seq(1, 24, 3))
+floor(25 / 3)
 # ---- 6. TREINO ----
 for (percent in c(seq(min_percent,max_percent, step_percent))) {
   tic(paste("Treinando com", percent, "% do dataset para treino!"))
