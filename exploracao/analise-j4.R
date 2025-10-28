@@ -44,7 +44,7 @@ df_j4 |>
     digits = 3
   ) |>
   kable_styling(latex_options = c("scale_down", "hold_position")) |> 
-  save_kable(".Relatórios/relatorio-III-2025-10-18/res/tab_j4_resultados.tex")
+  save_kable(".relatorios/relatorio-III-2025-10-18/res/tab_j4_resultados.tex")
 
 ##### 1.1.1 Estatísticas do R² ----
 df_j4 |> 
@@ -152,7 +152,7 @@ df_j4 |>
     digits = 3
   ) |>
   kable_styling(latex_options = c("scale_down")) |> 
-  save_kable(".Relatórios/relatorio-III-2025-10-18/res/j4-tab-top10.tex")
+  save_kable(".relatorios/relatorio-III-2025-10-18/res/j4-tab-top10.tex")
 
 #### 3. Gerais do melhor modelo ----
 df_j4 |>
@@ -164,4 +164,4 @@ df_j4 |>
     digits = 3
   ) |>
   kable_styling(latex_options = c("scale_down")) |> 
-  save_kable(".Relatórios/relatorio-III-2025-10-18/res/j4-tab-melhor.tex")
+  save_kable(".relatorios/relatorio-III-2025-10-18/res/j4-tab-melhor.tex")

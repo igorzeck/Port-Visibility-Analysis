@@ -50,7 +50,7 @@ df_j3 |>
     digits = 3
   ) |>
   kable_styling(latex_options = c("scale_down", "hold_position")) |> 
-  save_kable(".Relatórios/relatorio-III-2025-10-18/res/tab_j3_resultados.tex")
+  save_kable(".relatorios/relatorio-III-2025-10-18/res/tab_j3_resultados.tex")
 
 # Melhor acurácia média por horas de árvores
 df_j3 |> 
@@ -74,7 +74,7 @@ df_j3 |>
     digits = 3
   ) |>
   kable_styling(latex_options = c("scale_down", "hold_position")) |> 
-  save_kable(".Relatórios/relatorio-III-2025-10-18/res/tab_j3_2.tex")
+  save_kable(".relatorios/relatorio-III-2025-10-18/res/tab_j3_2.tex")
 
 ##### 1.1.2 ntrees com maior acurácia
 df_j3 |> 

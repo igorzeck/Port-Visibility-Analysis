@@ -41,7 +41,7 @@ df_j1 |>
     digits = 3
   ) |>
   kable_styling(latex_options = c("scale_down", "hold_position")) |> 
-  save_kable(".Relatórios/relatorio-III-2025-10-18/res/tab_j1_resultados.tex")
+  save_kable(".relatorios/relatorio-III-2025-10-18/res/tab_j1_resultados.tex")
 
 ##### 1.1.1 Melhor acurácia média por porcentagem ----
 df_j1 |> 
@@ -59,7 +59,7 @@ df_j1 |>
     digits = 3
   ) |>
   kable_styling(latex_options = c("scale_down", "hold_position")) |> 
-  save_kable(".Relatórios/relatorio-III-2025-10-18/res/tab_j1_2.tex")
+  save_kable(".relatorios/relatorio-III-2025-10-18/res/tab_j1_2.tex")
 
 ##### 1.1.2 ntrees com maior acurácia ----
 df_j1 |> 
@@ -332,7 +332,7 @@ df_j1 |>
     digits = 3
   ) |>
   kable_styling(latex_options = c("scale_down")) |> 
-  save_kable(".Relatórios/relatorio-III-2025-10-18/res/tab-top10.tex")
+  save_kable(".relatorios/relatorio-III-2025-10-18/res/tab-top10.tex")
 
 #### 3. Gerais do melhor modelo ----
 df_j1 |>
@@ -344,4 +344,4 @@ df_j1 |>
     digits = 3
   ) |>
   kable_styling(latex_options = c("scale_down")) |> 
-  save_kable(".Relatórios/relatorio-III-2025-10-18/res/tab-melhor.tex")
+  save_kable(".relatorios/relatorio-III-2025-10-18/res/tab-melhor.tex")
