@@ -1,4 +1,4 @@
-"kfolds","hrs","ntrees","acuracia_total_treino","acuracia_total_teste","imp_vis","bal_acc_nevoa","bal_acc_visBaixa","bal_acc_visMedia","bal_acc_visCompleta","runtime_sec"
+"kfolds","hrs","ntrees","acuracia_total_treino","acuracia_total_teste","bal_acc_nevoa","bal_acc_visBaixa","bal_acc_visMedia","bal_acc_visCompleta","runtime_sec"
 2,1,1,0.780981657956758,0.780555783260923,0.614633791715451,0.691510505385671,0.632289364488834,0.75961912134624,9.59999999999999
 2,1,21,0.842463367148273,0.844700385277482,0.615867750254444,0.760760571307616,0.65812661207876,0.790280678851175,39.978
 2,1,41,0.84538374833487,0.847200590212313,0.621702269718466,0.765362979599694,0.66203094373781,0.792188932847227,67.722

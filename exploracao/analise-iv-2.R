@@ -1,23 +1,22 @@
-# Análise do arquivo iv-1 ----
-# Modelo de classificação 80/20 com reposição
+# Análise do arquivo iv-2 ----
+# Modelo de classificação 80/20 sem reposição
 ## 0. Setup ----
 library(tidyverse)
 library(knitr)
 library(kableExtra)
 library(plotly)
 
-# TODO: Mudar nome para ser só arq-iv-1
-df <- read_csv("exploracao/arq-iv-1-ntrees-hrs.csv") |> 
-  slice(-(1:166))  # Valores repetidos
+# TODO: Mudar nome para ser só arq-iv-2
+df <- read_csv("exploracao/arq-iv-2.csv")
 
 glimpse(df)
 
-head(df)
+view(df)
 
 ## 1. Tempo de treino ----
-### 1.1. Por clusters ----
+### 1.1. Por kfolds ----
 tempo <- df |> 
-  group_by(clusters) |> 
+  group_by(kfolds) |> 
   summarise(tempo_medio = mean(runtime_sec),
             tempo_max = max(runtime_sec),
             tempo_min = min(runtime_sec),
@@ -29,20 +28,20 @@ view(tempo)
 tempo |> 
   kbl(
     format = "latex",
-    caption = "Tabela de tempo por número de clusters",
-    label = "tab_iv_tempo_cluster",
+    caption = "Tabela de tempo por número de kfolds",
+    label = "tab_iv_2_tempo_cluster",
     booktabs = TRUE,
     digits = 3
   ) |>
   kable_styling(latex_options = c("scale_down", "hold_position")) |> 
-  save_kable(".relatorios/relatorio-IV-2025-10-31/res/tab_iv_tempo_cluster.tex")
+  save_kable(".relatorios/relatorio-IV-2025-10-31/res/tab_iv_2_tempo_cluster.tex")
 
 # Gráfico
 tempo |> 
   pivot_longer(cols = tempo_medio:tempo_min,
                names_to = "tipo_tempo",
                values_to = "valor_tempo") |> 
-  ggplot(aes(x = clusters,
+  ggplot(aes(x = kfolds,
              y = valor_tempo,
              linetype = tipo_tempo,
              color = tipo_tempo)) +
@@ -67,12 +66,12 @@ tempo |>
   kbl(
     format = "latex",
     caption = "Tabela de tempo por horas no futuro",
-    label = "tab_iv_tempo_hrs",
+    label = "tab_iv_2_tempo_hrs",
     booktabs = TRUE,
     digits = 3
   ) |>
   kable_styling(latex_options = c("scale_down", "hold_position")) |> 
-  save_kable(".relatorios/relatorio-IV-2025-10-31/res/tab_iv_tempo_hrs.tex")
+  save_kable(".relatorios/relatorio-IV-2025-10-31/res/tab_iv_2_tempo_hrs.tex")
 
 # Gráfico
 tempo |> 
@@ -104,12 +103,12 @@ tempo |>
   kbl(
     format = "latex",
     caption = "Tabela de tempo por número de árvores",
-    label = "tab_iv_tempo_ntrees",
+    label = "tab_iv_2_tempo_ntrees",
     booktabs = TRUE,
     digits = 3
   ) |>
   kable_styling(latex_options = c("scale_down", "hold_position")) |> 
-  save_kable(".relatorios/relatorio-IV-2025-10-31/res/tab_iv_tempo_ntrees.tex")
+  save_kable(".relatorios/relatorio-IV-2025-10-31/res/tab_iv_2_tempo_ntrees.tex")
 
 # Gráfico
 tempo |> 
@@ -126,9 +125,9 @@ tempo |>
 # Crescimento perfeitamente linear!
 
 ## 2. Acurácia de teste ----
-### 2.1. Por clusters ----
+### 2.1. Por kfolds ----
 acc <- df |> 
-  group_by(clusters) |> 
+  group_by(kfolds) |> 
   summarise(acc_medio = mean(acuracia_total_teste),
             acc_max = max(acuracia_total_teste),
             acc_min = min(acuracia_total_teste))
@@ -139,7 +138,7 @@ view(acc)
 acc |> 
   kbl(
     format = "latex",
-    caption = "Tabela de acurácia por número de clusters",
+    caption = "Tabela de acurácia por número de kfolds",
     label = "tab_iv_acc_cluster",
     booktabs = TRUE,
     digits = 3
@@ -152,7 +151,7 @@ acc |>
   pivot_longer(cols = acc_medio:acc_min,
                names_to = "tipo_acc",
                values_to = "valor_acc") |> 
-  ggplot(aes(x = clusters,
+  ggplot(aes(x = kfolds,
              y = valor_acc,
              linetype = tipo_acc,
              color = tipo_acc)) +
@@ -238,9 +237,9 @@ acc |>
 # se mantém basicamente constante.
 
 ## 3. Acurácia para névoa ----
-### 3.1. Por clusters ----
+### 3.1. Por kfolds ----
 bal_acc_nevoa <- df |> 
-  group_by(clusters) |> 
+  group_by(kfolds) |> 
   summarise(bal_acc_nevoa_medio = mean(bal_acc_nevoa),
             bal_acc_nevoa_max = max(bal_acc_nevoa),
             bal_acc_nevoa_min = min(bal_acc_nevoa))
@@ -251,7 +250,7 @@ view(bal_acc_nevoa)
 bal_acc_nevoa |> 
   kbl(
     format = "latex",
-    caption = "Tabela de acurácia por número de clusters",
+    caption = "Tabela de acurácia por número de kfolds",
     label = "tab_iv_bal_acc_nevoa_cluster",
     booktabs = TRUE,
     digits = 3
@@ -264,7 +263,7 @@ bal_acc_nevoa |>
   pivot_longer(cols = bal_acc_nevoa_medio:bal_acc_nevoa_min,
                names_to = "tipo_bal_acc_nevoa",
                values_to = "valor_bal_acc_nevoa") |> 
-  ggplot(aes(x = clusters,
+  ggplot(aes(x = kfolds,
              y = valor_bal_acc_nevoa,
              linetype = tipo_bal_acc_nevoa,
              color = tipo_bal_acc_nevoa)) +
@@ -273,7 +272,7 @@ bal_acc_nevoa |>
 # Análise:
 # Apesar dos poucos pontos de dados
 # Aperanta haver uma aumento claro para
-# número maiores de clusters
+# número maiores de kfolds
 # Um estudo com mais cluster se demonstra necessário
 
 ### 3.2. Por hrs ----
@@ -347,16 +346,16 @@ bal_acc_nevoa |>
 # Sem padrão parao número de árvores.
 
 ## 4. Treino X Teste ----
-### 4.1. Por clusters ----
+### 4.1. Por kfolds ----
 df |> 
-  group_by(clusters) |> 
+  group_by(kfolds) |> 
   summarise(media_acc_treino = mean(acuracia_total_treino),
             media_acc_teste = mean(acuracia_total_teste)) |> 
   pivot_longer(cols = c("media_acc_treino",
                         "media_acc_teste"),
               names_to = "tipo_acuracia_total",
               values_to = "valor_acuracia_total") |> 
-  ggplot(aes(x = clusters,
+  ggplot(aes(x = kfolds,
              y = valor_acuracia_total,
              linetype = tipo_acuracia_total,
              color = tipo_acuracia_total)) +
@@ -397,7 +396,7 @@ df |>
 # Análise: PRAticamente constante
 
 ## 5. Por tudo ----
-plot_ly(df |> filter(clusters == 2),
+plot_ly(df |> filter(kfolds == 2),
         x = ~hrs,
         y = ~ntrees,
         z = ~acuracia_total_teste,
@@ -405,7 +404,7 @@ plot_ly(df |> filter(clusters == 2),
         mode = "points",
         marker = list(size = 3))
 
-plot_ly(df |> filter(clusters == 4),
+plot_ly(df |> filter(kfolds == 4),
         x = ~hrs,
         y = ~ntrees,
         z = ~acuracia_total_teste,
@@ -413,7 +412,7 @@ plot_ly(df |> filter(clusters == 4),
         mode = "points",
         marker = list(size = 3))
 
-plot_ly(df |> filter(clusters == 6),
+plot_ly(df |> filter(kfolds == 6),
         x = ~hrs,
         y = ~ntrees,
         z = ~acuracia_total_teste,

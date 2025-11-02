@@ -36,6 +36,7 @@ data_ini_str = data_ini.strftime(dt_pstr + "00")
 data_fim_str = data_fim.strftime(dt_pstr + "23")
 
 # Arquivo
+arq_raw=join('datasets', f"raw-metar-{localidade}-{data_ini.strftime(dt_pstr_data)}-{data_fim.strftime(dt_pstr_data)}.txt")
 arq_result=join('datasets', f"metar-{localidade}-{data_ini.strftime(dt_pstr_data)}-{data_fim.strftime(dt_pstr_data)}.csv")
 arq_log=join('datasets', f"metar-{localidade}-{data_ini.strftime(dt_pstr_data)}-{data_fim.strftime(dt_pstr_data)}.log")
 
@@ -48,7 +49,7 @@ colunas = [
     "velocidade_vento(m/s)",
     "dir-vento(graus)",
     "vis(m)",
-    "pressao(mb)"
+    "pressao(mb)",
 ]
 
 log_list = []
@@ -173,6 +174,10 @@ linhas_csv.extend(decod_metar(linhas_metars))
 print("Sucesso!")
 print("Criando arquivo .csv e de log...")
 ## Passo 4 - Arquivos finais
+with open(arq_result, 'w', encoding='utf-8') as arqout:
+    arqout.write("metar")
+    arqout.writelines(linhas_metars)
+
 with open(arq_result, 'w', encoding='utf-8') as arqout:
     arqout.writelines(linhas_csv)
 
