@@ -175,7 +175,7 @@ print("Sucesso!")
 print("Criando arquivo .csv e de log...")
 ## Passo 4 - Arquivos finais
 with open(arq_raw, 'w', encoding='utf-8') as arqout:
-    arqout.write("metar")
+    arqout.write("datetime<>metar\n")
     arqout.writelines('\n'.join(linhas_metars))
 
 with open(arq_result, 'w', encoding='utf-8') as arqout:
