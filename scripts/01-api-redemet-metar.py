@@ -29,7 +29,7 @@ dt_pstr_comp = "%Y-%m-%d %H:%M:%S"
 
 # Parâmetros modificáveis
 data_ini = datetime.date(2011, 1, 1)
-data_fim = datetime.date(2025, 8, 11)
+data_fim = datetime.date(2025, 11, 1)
 localidade='SBGL'
 
 data_ini_str = data_ini.strftime(dt_pstr + "00")
@@ -174,9 +174,9 @@ linhas_csv.extend(decod_metar(linhas_metars))
 print("Sucesso!")
 print("Criando arquivo .csv e de log...")
 ## Passo 4 - Arquivos finais
-with open(arq_result, 'w', encoding='utf-8') as arqout:
+with open(arq_raw, 'w', encoding='utf-8') as arqout:
     arqout.write("metar")
-    arqout.writelines(linhas_metars)
+    arqout.writelines("\n".join(linhas_metars))
 
 with open(arq_result, 'w', encoding='utf-8') as arqout:
     arqout.writelines(linhas_csv)

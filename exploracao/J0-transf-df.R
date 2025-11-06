@@ -4,7 +4,7 @@
 set.seed(42)
 # Test passa a ser o df_test_final (contém 10% dos dados)
 print("Carregamento do datset")
-df <- read_csv('dataset-definitivo.csv')
+df <- read_csv('datasets/dataset-definitivo.csv')
 
 ## 1. Transformações ao dataset ----
 print("Transformações...")
@@ -47,7 +47,7 @@ df_processed <- df_processed %>%
 df_processed <- na.omit(df_processed)
 
 print("Exportando os datsets...")
-write_csv(df_processed, "dataset-j0-definitivo-transf.csv")
+write_csv(df_processed, "exploracao/dataset-j0-definitivo-transf.csv")
 
 rm(df_processed)
 rm(df)
