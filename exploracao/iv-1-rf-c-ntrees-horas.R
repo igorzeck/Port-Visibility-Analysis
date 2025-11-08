@@ -14,11 +14,11 @@
 # . Informações armazenadas:
 # - Acurácia balanceada;
 # ---- 1. SETUP ----
-source("libs.R")
+source("exploracao/libs.R")
 library(tidyverse)
 
 # ---- 2. DIVISÃO DE CLASSES ----
-df <- read_csv("dataset-j0-definitivo-transf.csv") %>% 
+df <- read_csv("exploracao/dataset-j0-definitivo-transf.csv") %>% 
   mutate(tipo_vis = cut(`vis(m)`, 
                         breaks = c(-1, 2000, 6000, 9999, 10000),
                         labels = c("nevoa",
