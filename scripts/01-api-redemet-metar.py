@@ -105,7 +105,7 @@ def decod_metar(linhas: list[str]):
             ultimo_timestamp = timestamp_final
         else:
             err_str = f"Linha sem METAR ou SPECI: {metar_str}\n"
-            print(err_str, end="")
+            # print(err_str, end="")
             log_list.append(err_str)
     return linhas_filtradas
 
@@ -160,7 +160,7 @@ def extrair_metar():
                     # Senão vai para próxima
                     pagina += 1
             else:
-                print(f"Erro {_curl.stderr}")
+                # print(f"Erro {_curl.stderr}")
                 break # Prossegue com o resto do script até a data que conseguiu capturar
         cont += 1
     return linhas_brutas
@@ -175,8 +175,8 @@ print("Sucesso!")
 print("Criando arquivo .csv e de log...")
 ## Passo 4 - Arquivos finais
 with open(arq_raw, 'w', encoding='utf-8') as arqout:
-    arqout.write("metar")
-    arqout.writelines("\n".join(linhas_metars))
+    arqout.write("datetime<>metar\n")
+    arqout.writelines('\n'.join(linhas_metars))
 
 with open(arq_result, 'w', encoding='utf-8') as arqout:
     arqout.writelines(linhas_csv)
