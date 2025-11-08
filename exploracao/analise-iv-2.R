@@ -11,9 +11,16 @@ df <- read_csv("exploracao/arq-iv-2.csv")
 
 glimpse(df)
 
+print(nrow(df))
+# 360 Modelo
+
 view(df)
 
 ## 1. Tempo de treino ----
+tempo_total <- df |> 
+  summarise(tempo_total = sum(runtime_sec))
+
+print(tempo_total / 3600)
 ### 1.1. Por kfolds ----
 tempo <- df |> 
   group_by(kfolds) |> 
@@ -125,6 +132,8 @@ tempo |>
 # Crescimento perfeitamente linear!
 
 ## 2. Acurácia de teste ----
+df |> 
+  slice_max(acuracia_total_teste)
 ### 2.1. Por kfolds ----
 acc <- df |> 
   group_by(kfolds) |> 

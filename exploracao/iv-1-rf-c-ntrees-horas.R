@@ -1,4 +1,4 @@
-# Relatório IV - Modelo RF de Classificação ----
+  # Relatório IV - Modelo RF de Classificação ----
 # . Treinado com:
 # - tamanho = (80/20)/20;
 # - ntrees = variável (1:200:20) -> 10 iterações
@@ -8,12 +8,11 @@
 # - classes = 4 classes -> 1 iteração
 #   - nevoa: [0 - 2e3m];
 #   - visBaixa: ]2e3m - 6e3m];
-#   - visMedia: ]6e3m - 10e4m[;
+#   - visMedia: ]6e3m - 1e4m[;
 #   - VisCompleta: [10e4m];
 # Total: 10 * 12 * 1 * 3 = 360 iterações
 # . Informações armazenadas:
 # - Acurácia balanceada;
-# - Importância (relativa) das variáveis;
 # ---- 1. SETUP ----
 source("libs.R")
 library(tidyverse)

@@ -7,10 +7,34 @@ library(kableExtra)
 library(plotly)
 
 # TODO: Mudar nome para ser só arq-iv-1
-df <- read_csv("exploracao/arq-iv-1-ntrees-hrs.csv") |> 
+df <- read_csv("exploracao/arq-iv-1-ntrees-hrs.csv")
+
+tempo_total <- df |> 
+  select(runtime_sec) |> 
+  summarise(tempo_total = sum(runtime_sec))
+
+print(tempo_total / 3600)
+# Com valores repetidos: tempo total de aproximadamente 72h
+
+print(nrow(df))
+# 623 modelos treinados
+
+df <- df |> 
   slice(-(1:166))  # Valores repetidos
 
+tempo_total <- df |> 
+  select(runtime_sec) |> 
+  summarise(tempo_total = sum(runtime_sec))
+
+print(tempo_total / 3600)
+# Tempo total de treino aproximadamente 56h (sem repetições)
+
+view(df)
+
 glimpse(df)
+
+print(nrow(df))
+# 457 modelos treinados
 
 head(df)
 
@@ -126,6 +150,10 @@ tempo |>
 # Crescimento perfeitamente linear!
 
 ## 2. Acurácia de teste ----
+df |> 
+  slice_max(acuracia_total_teste) |> 
+  view()
+
 ### 2.1. Por clusters ----
 acc <- df |> 
   group_by(clusters) |> 
@@ -238,6 +266,9 @@ acc |>
 # se mantém basicamente constante.
 
 ## 3. Acurácia para névoa ----
+df |> 
+  slice_max(bal_acc_nevoa)
+
 ### 3.1. Por clusters ----
 bal_acc_nevoa <- df |> 
   group_by(clusters) |> 
@@ -361,7 +392,7 @@ df |>
              linetype = tipo_acuracia_total,
              color = tipo_acuracia_total)) +
   geom_line()
-# Análise:
+  # Análise:
 # Cresce quase exponencial
 
 ### 4.2. Por hrs ----
