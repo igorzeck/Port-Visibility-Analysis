@@ -42,12 +42,10 @@ df <- df %>%
     temp_orvalho = dew_point,
     pressao = pressure,
     vis = visibility,
-    clima = weather_information,
-    categ_nuvem = cloud_cat,
-    altura_nuvem = cloud_alt
+    clima = weather_information
   )
 
 glimpse(df)
 
 ## 3. Exporta resultado
-write_csv(df)
+write_csv(df, "datasets/dataset-extendido.csv")

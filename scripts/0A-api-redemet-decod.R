@@ -9,12 +9,12 @@ source("exploracao/libs.R")
 df_raw <- read_delim(delim="<>","datasets/raw-metar-SBGL-2011-01-01-2025-11-01.txt")
 
 ## 0.1 Decodificação de dados no df ----
-df <- metar_decode(df_raw$metar) %>% 
+df_decoded <- metar_decode(df_raw$metar) %>% 
   janitor::clean_names()
 # Demora alguns minutos...
 
 ## 0.2 Adição do datetime
-df <- df %>% 
+df <- df_decoded %>% 
   mutate(datetime = df_raw$datetime) %>% 
   relocate(datetime)
 
@@ -57,19 +57,21 @@ df <- df %>%
 df <- df %>% 
   select(-wind_shear)
 
-## 5. Wind direction ----
+## 6. Wind direction ----
 # Ele aparenta conter texto em alguns casos
 # Por agora só pega o valor inicial
+# Dá fill nos valores ausentes ("down" - ffill - é padrão)
 df <- df %>% 
-  mutate(wind_direction = as.numeric(str_split_fixed(wind_direction,";", n = 2)[,1]))
+  mutate(wind_direction = as.numeric(str_split_fixed(wind_direction,";", n = 2)[,1])) %>% 
+  fill(wind_direction)
 
-## 5. Visbility ----
+## 7. Visbility ----
 # Ele aparenta conter texto em alguns casos
-# Por agora mantém os valores
 df %>% 
   group_by(visibility) %>% 
   summarise(n = n()) %>% 
   view()
+
 # Para CAVOK e 9999 se mantém como 10.000 a visibilidade
 # De acordo com o DECEA (https://ajuda.decea.mil.br/base-de-conhecimento/como-decodificar-o-metar-e-o-speci/)
 # A sigla CAVOK (“Ceiling na Visibility OK”, teto e visibilidade OK) pode substituir visibilidade, RVR, Tempo Presente e nebulosidade desde que a visibilidade seja maior que 10 km, sem nuvens abaixo de 5000 pés (ou a maior altitude mínima do setor e nenhuma cumulonimbus ou cumulus em qualquer nível) e ausência de outros fenômenos significativos. 
@@ -90,7 +92,7 @@ df <- df %>%
       sapply(min, na.rm = TRUE)
   )
 
-## 5. Cloud Coverage ----
+## 8. Cloud Coverage ----
 # Ele aparenta conter texto em alguns casos
 # Por agora pega so a primeira categoria
 df %>% 
@@ -152,15 +154,21 @@ df %>%
   filter(is.na(altura_nuvem)) %>% 
   group_by(categ_nuvem, altura_nuvem) %>% 
   summarise(n = n())
+
+df <- df %>% 
+  mutate(altura_nuvem = if_else(is.na(altura_nuvem), 0, altura_nuvem))
+  
 # Todos os dados vazios foram levados em conta!
 df <- df %>% 
   select(-cloud_coverage)
 
-## 6. Weather Information ----
+## 9. Weather Information ----
 # Ele aparenta conter texto em alguns casos
-# Por agora mantém os valores
+# Por agora mantém os valores (75 categorias)
+df <- df %>%
+  mutate(weather_information = if_else(is.na(weather_information), "Sem Info", weather_information))
 
-## 6. Runway visibility ----
+## 10. Runway visibility ----
 # Ajudaria a orientação direcional
 df %>% 
   group_by(runway_visibility) %>% 
@@ -171,7 +179,12 @@ df %>%
 df <- df %>% 
   select(-runway_visibility)
 
-## 7. Airport ----
+## 11. Pressão ----
+# Forward fill para NAs
+df <- df %>% 
+  fill(pressure)
+
+## 12. Airport ----
 df <- df %>% 
   select(-contains("airport"))
 
@@ -183,4 +196,4 @@ df <- df %>%
   select(-decode_date, -original_metar)
 
 ## Final ----
-write_csv(df, "datasets/dataset-extendido.csv")
+write_csv(df, "datasets/metar-SBGL-2011-01-01-2025-11-01.csv")
