@@ -9,7 +9,7 @@ source("exploracao/libs.R")
 df_raw <- read_delim(delim="<>","datasets/raw-metar-SBGL-2011-01-01-2025-11-01.txt")
 
 ## 0.1 Decodificação de dados no df ----
-df_decoded <- metar_decode(df_raw$metar) %>% 
+df_decoded <- metar_decode(df_raw$metar) %>%
   janitor::clean_names()
 # Demora alguns minutos...
 
@@ -82,6 +82,7 @@ df <- df %>%
     visibility == "Ceiling And Visibility OK" ~ "10000",
     TRUE ~ visibility
   ))
+
 # Nos demais casos, por serem muito dispersos
 # Decide-se cortar a ideia de direção e se pega o
 # menor valor numérico na string
@@ -91,6 +92,13 @@ df <- df %>%
       lapply(as.numeric) |>                                             
       sapply(min, na.rm = TRUE)
   )
+
+# Retira valores infinitos (por ffill por agora)
+df <- df %>% 
+  mutate(visibility = if_else(visibility == Inf, NA, visibility))
+
+df <- df %>% 
+  fill(visibility)
 
 ## 8. Cloud Coverage ----
 # Ele aparenta conter texto em alguns casos
@@ -164,9 +172,10 @@ df <- df %>%
 
 ## 9. Weather Information ----
 # Ele aparenta conter texto em alguns casos
-# Por agora mantém os valores (75 categorias)
+# Mantém apenas o primeiro dos valores
 df <- df %>%
-  mutate(weather_information = if_else(is.na(weather_information), "Sem Info", weather_information))
+  mutate(weather_information = if_else(weather_information == "", "Sem Info", weather_information)) %>% 
+  mutate(weather_information = str_split_fixed(weather_information, ";", 2)[, 1])
 
 ## 10. Runway visibility ----
 # Ajudaria a orientação direcional
