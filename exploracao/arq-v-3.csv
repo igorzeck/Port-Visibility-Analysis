@@ -1,0 +1,2 @@
+"","kfolds","hrs","acuracia_total_treino","acuracia_total_teste","bal_acc_nevoa","bal_acc_visBaixa","bal_acc_visMedia","bal_acc_visCompleta","runtime_sec"
+3,1,0.854309368090924,0.854963938044378,0.639396707645131,0.787336154983787,0.679837788123328,0.80493511149444,929.663

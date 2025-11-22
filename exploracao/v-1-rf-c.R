@@ -1,4 +1,8 @@
 # Relatório V - Modelo RF com METARs extendidos ----
+# Foram também corrigidos os seguintes erros:
+# 1. O 'lead' era aplicado de forma cumulativa
+# 2. A extração da acurácia balanceada é mais robusta
+# 3. Retirou-se a 'importance' já que não é analisada
 # OBS: Mais variáveis dos METARS
 # . Treinado com:
 # - tamanho = (80/20)/20;
@@ -18,7 +22,7 @@ source("exploracao/libs.R")
 library(tidyverse)
 
 # ---- 2. DIVISÃO DE CLASSES ----
-df <- read_csv("exploracao/T0-dataset-extendido-transf.csv") %>% 
+df_original <- read_csv("exploracao/T0-dataset-extendido-transf.csv") %>% 
   mutate(tipo_vis = cut(vis, 
                         breaks = c(-1, 1000, 6000, 9999, 10000),
                         labels = c("nevoa",
@@ -35,8 +39,8 @@ registerDoParallel(cl)
 
 cat(sprintf("\nProcessamento paralelo registrado para usar %d núcleos (físicos).\n", num_cores))
 
-# Arquivo dos resultados
-outfile <- "exploracao/arq-v-1.csv"
+# Arquivo dos resultados (corrigido)
+outfile <- "exploracao/arq-v-1-corr.csv"
 
 # -- Tibble de exportação --
 tbl_out <- tibble(
@@ -96,8 +100,9 @@ for (num_kfold in seq(min_kfolds, max_kfolds, step_kfolds)) {
     verboseIter = FALSE
   )
   for (hrs in seq(min_hrs, max_hrs, step_hrs)) {
+    df <- df_original
     if (hrs != 1) {
-      # -- Lag das horas --
+      # -- Lead das horas --
       df <- df %>% 
         mutate(tipo_vis = lead(tipo_vis, hrs)) %>% 
         na.omit()
@@ -124,7 +129,6 @@ for (num_kfold in seq(min_kfolds, max_kfolds, step_kfolds)) {
                      method = "ranger",
                      trControl = control,
                      metric = "Accuracy",
-                     importance = "permutation",
                      num.trees = nt)
       
       # -- Log --
@@ -145,10 +149,17 @@ for (num_kfold in seq(min_kfolds, max_kfolds, step_kfolds)) {
       # Acurácia por classe em teste
       conf_m <- confusionMatrix(data=pred, reference = df_teste$tipo_vis)
       
-      bal_acc_nevoa <- conf_m$byClass[, "Balanced Accuracy"]["Class: nevoa"]
-      bal_acc_visBaixa <- conf_m$byClass[, "Balanced Accuracy"]["Class: visBaixa"]
-      bal_acc_visMedia <- conf_m$byClass[, "Balanced Accuracy"]["Class: visMedia"]
-      bal_acc_visCompleta <- conf_m$byClass[, "Balanced Accuracy"]["Class: visCompleta"]
+      # bal_acc_nevoa <- conf_m$byClass[, "Balanced Accuracy"]["Class: nevoa"]
+      # bal_acc_visBaixa <- conf_m$byClass[, "Balanced Accuracy"]["Class: visBaixa"]
+      # bal_acc_visMedia <- conf_m$byClass[, "Balanced Accuracy"]["Class: visMedia"]
+      # bal_acc_visCompleta <- conf_m$byClass[, "Balanced Accuracy"]["Class: visCompleta"]
+      
+      ba <- conf_m$byClass[ , "Balanced Accuracy"]
+      
+      bal_acc_nevoa       <- ba[grep("nevoa", names(ba))]
+      bal_acc_visBaixa    <- ba[grep("visBaixa", names(ba))]
+      bal_acc_visMedia    <- ba[grep("visMedia", names(ba))]
+      bal_acc_visCompleta <- ba[grep("visCompleta", names(ba))]
       
       # Append dos resultados
       write.table(
@@ -175,6 +186,7 @@ for (num_kfold in seq(min_kfolds, max_kfolds, step_kfolds)) {
               " ntrees = ", nt,
               " finalizada → Acurácia = ", round(acc, 3),
               " Acurácia de Teste = ", round(acc_teste, 3),
+              " Acurácia de Névoa = ", round(bal_acc_nevoa, 3),
               " (", round(runtime, 2), "s)")
       
       runtime_total = runtime_total + runtime

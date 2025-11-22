@@ -1,9 +1,11 @@
 # Relatório V - Modelo RF com METARs extendidos ----
+# Essa é a versão com as correçãos (aplicáveis) do arquivo v-1
 # OBS: Modelo de regressão
 # . Treinado com:
 # - tamanho = (80/20)/20;
 # - ntrees = variável (1:200:20) -> 10 iterações
 # - horas = variável (1:24:2) -> 12 iterações
+# - cv = 5
 # Total: 10 * 12 = 120 iterações
 # . Informações armazenadas:
 # - Acurácia balanceada;
@@ -23,7 +25,7 @@ cat(sprintf("\nProcessamento paralelo registrado para usar %d núcleos.\n", num_
 
 # ---- 4. CONTROLE DE TREINAMENTO ----
 # arquivo dos resultados
-outfile <- "exploracao/arq-v-2.csv"
+outfile <- "exploracao/arq-v-2-corr.csv"
 
 if (!file.exists(outfile)) {
   write.csv(
@@ -39,7 +41,7 @@ if (!file.exists(outfile)) {
       runtime_sec = numeric()
     ),
     outfile,
-    row.names = TRUE
+    row.names = FALSE
   )
 }
 # -- kfolds --
@@ -63,7 +65,7 @@ iter_total <- (floor((max_ntrees - min_ntrees) / step_ntrees)) *
 
 control <- trainControl(
   method = "cv",        # Validação cruzada clássica
-  number = 8,           # 8 folds
+  number = 5,           # 5 folds
   allowParallel = TRUE, # usa todos os núcleos do cluster
   verboseIter = FALSE
 )
@@ -72,8 +74,9 @@ control <- trainControl(
 runtime_total <- 0
 
 for (hrs in seq(min_hrs, max_hrs, step_hrs)) {
+  df <- df_original
   if (hrs != 1) {
-    # -- Lag das horas --
+    # -- Lead das horas --
     df <- df %>% 
       mutate(vis = lead(vis, hrs)) %>% 
       na.omit()
@@ -97,8 +100,6 @@ for (hrs in seq(min_hrs, max_hrs, step_hrs)) {
                    method = "ranger",
                    trControl = control,
                    metric = "RMSE",
-                   importance = "permutation",
-                   # Define um número robusto de árvores
                    num.trees = nt)
     
     toc(log = TRUE, quiet = TRUE)
@@ -158,3 +159,6 @@ for (hrs in seq(min_hrs, max_hrs, step_hrs)) {
 
 ## Finalização ----
 cat("Tempo:", runtime_total)
+
+# Observação:
+# 42h24min
