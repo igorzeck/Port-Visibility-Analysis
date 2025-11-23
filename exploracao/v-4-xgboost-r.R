@@ -79,6 +79,19 @@ r2   <- 1 - sum((pred - y_teste)^2) / sum((mean(y_teste) - y_teste)^2)
 
 rmse; mae; r2
 
+# Predição no set de treino (para o R²)
+pred_treino <- predict(modelo, dtreino)
+
+# True values
+y_true_treino <- y_treino
+
+# Compute R²
+r2_treino <- 1 - sum((pred_treino - y_true_treino)^2) /
+  sum((mean(y_true_treino) - y_true_treino)^2)
+
+r2_treino
+
+
 # Importância
 imp <- xgb.importance(model = modelo)
 print(imp)

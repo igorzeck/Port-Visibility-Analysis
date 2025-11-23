@@ -14,7 +14,7 @@ source("exploracao/libs.R")
 library(lubridate)
 
 # ---- 2. CARREGAMENTO E PRÉ-PROCESSAMENTO ----
-df <- read_csv("exploracao/T0-dataset-extendido-transf.csv") %>% 
+df_original <- read_csv("exploracao/T0-dataset-extendido-transf.csv") %>% 
   mutate(clima = as.factor(clima))
 
 # ---- 3. CONFIGURAÇÃO DE PARALELISMO ----
