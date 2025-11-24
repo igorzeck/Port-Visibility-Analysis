@@ -4,9 +4,8 @@
 # . Treinado com:
 # - tamanho = (80/20)/20;
 # - ntrees = variável (1:201:20) -> 11 iterações
-# - horas = variável (1:25:2) -> 12 iterações
+# - horas = variável (1:18:2) -> 9 iterações
 # - cv = 5
-# Total: 10 * 12 = 120 iterações
 # . Informações armazenadas:
 # - Acurácia balanceada;
 # ---- 1. Setup ----
@@ -51,7 +50,7 @@ step_kfolds <- 2
 
 # -- horas --
 min_hrs <- 1
-max_hrs <- 25
+max_hrs <- 18
 step_hrs <- 2
 
 # -- ntrees --
@@ -161,4 +160,4 @@ for (hrs in seq(min_hrs, max_hrs, step_hrs)) {
 cat("Tempo:", runtime_total)
 
 # Observação:
-# 42h24min
+# 22h
