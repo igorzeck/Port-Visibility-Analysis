@@ -91,7 +91,6 @@ r2_treino <- 1 - sum((pred_treino - y_true_treino)^2) /
 
 r2_treino
 
-
 # Importância
 imp <- xgb.importance(model = modelo)
 print(imp)

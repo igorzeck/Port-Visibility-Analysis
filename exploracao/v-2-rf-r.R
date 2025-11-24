@@ -3,8 +3,8 @@
 # OBS: Modelo de regressão
 # . Treinado com:
 # - tamanho = (80/20)/20;
-# - ntrees = variável (1:200:20) -> 10 iterações
-# - horas = variável (1:24:2) -> 12 iterações
+# - ntrees = variável (1:201:20) -> 11 iterações
+# - horas = variável (1:25:2) -> 12 iterações
 # - cv = 5
 # Total: 10 * 12 = 120 iterações
 # . Informações armazenadas:

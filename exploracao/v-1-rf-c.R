@@ -6,15 +6,15 @@
 # OBS: Mais variáveis dos METARS
 # . Treinado com:
 # - tamanho = (80/20)/20;
-# - ntrees = variável (1:200:20) -> 10 iterações
-# - horas = variável (1:24:2) -> 12 iterações
+# - ntrees = variável (1:201:20) -> 10 iterações
+# - horas = variável (1:24:4) -> 6 iterações
 # - kflolds = variável (8) -> 1 iterações
 # - classes = 4 classes -> 1 iteração
 #   - nevoa: [0 - 1e3m]; -> névoa restrita
 #   - visBaixa: ]1e3m - 6e3m];
 #   - visMedia: ]6e3m - 10e4m[;
 #   - VisCompleta: [10e4m];
-# Total: 10 * 12 * 1 = 120 iterações
+# Total: 10 * 6 * 1 = 66 iterações
 # . Informações armazenadas:
 # - Acurácia balanceada;
 # ---- 1. SETUP ----
