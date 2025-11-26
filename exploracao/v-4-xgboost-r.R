@@ -1,4 +1,4 @@
-# Relatório V - modelo RF com XGDBoost (Regressão) ----
+# Relatório V - modelo RF com XGBoost (Regressão) ----
 # Treino de um único modelo de teste
 # ---- 1. SETUP ----
 source("exploracao/libs.R")
@@ -12,6 +12,7 @@ df <- read_csv("exploracao/T0-dataset-extendido-transf.csv") %>%
   mutate(clima = as.factor(clima))
 
 # ---- 3. XGBOOST ----
+tic(paste("Começando a treinar o modelo..."))
 set.seed(42)
 # Divisão do dataset
 tam <- floor(0.8 * nrow(df))
@@ -52,8 +53,8 @@ dteste  <- xgb.DMatrix(data = as.matrix(teste_x),  label = y_teste)
 params <- list(
   objective = "reg:squarederror",
   eval_metric = "rmse",
-  eta = 0.3,
-  max_depth = 6,
+  eta = 0.01,
+  max_depth = 8,
   subsample = 1,
   colsample_bytree = 1,
   nthread = 10
@@ -63,34 +64,61 @@ params <- list(
 modelo <- xgb.train(
   params = params,
   data = dtreino,
-  nrounds = 300,
+  nrounds = 5000,
   watchlist = list(train = dtreino, test = dteste),
-  print_every_n = 20
+  print_every_n = 50
 )
 
-# Predições
-pred <- predict(modelo, dteste)
+# Para timer e pega tempo
+toc(log = TRUE, quiet = TRUE)
+log_list <- tic.log(format = FALSE)
+entry <- log_list[[length(log_list)]]
+runtime <- entry$toc - entry$tic
+tic.clearlog()
 
-# Métricas
-rmse <- sqrt(mean((pred - y_teste)^2))
-mae  <- mean(abs(pred - y_teste))
-r2   <- 1 - sum((pred - y_teste)^2) / sum((mean(y_teste) - y_teste)^2)
-# R² baixo... 80% para hora atual e 60% para 1h no futuro
+# Tempo de treino
+cat(paste0(round(runtime,3),"s"))
 
-rmse; mae; r2
+# modelo <- readRDS("exploracao/modelo-v-4-r.RDS")
 
-# Predição no set de treino (para o R²)
-pred_treino <- predict(modelo, dtreino)
+## Predições ----
+modelo
 
-# True values
+### Log de treino ----
+modelo$evaluation_log
+modelo$evaluation_log %>% 
+  ggplot() +
+  geom_line(aes(iter, train_rmse), colour = "blue") +
+  geom_line(aes(iter, test_rmse), color = "red")
+
+#### Predições ----
+# Treino
+pred <- predict(modelo, dtreino)
 y_true_treino <- y_treino
-
-# Compute R²
-r2_treino <- 1 - sum((pred_treino - y_true_treino)^2) /
+rmse <- sqrt(mean((pred - y_treino)^2))
+mae  <- mean(abs(pred - y_treino))
+r2 <- 1 - sum((pred_treino - y_true_treino)^2) /
   sum((mean(y_true_treino) - y_true_treino)^2)
 
-r2_treino
+# Resultados
+rmse; mae; r2
 
-# Importância
+# Teste
+pred <- predict(modelo, dteste)
+y_true <- y_teste
+rmse <- sqrt(mean((pred - y_teste)^2))
+mae  <- mean(abs(pred - y_teste))
+r2 <- 1 - sum((pred - y_true)^2) /
+  sum((mean(y_true) - y_true)^2)
+
+# Resultados
+rmse; mae; r2
+
+#### Importância ----
 imp <- xgb.importance(model = modelo)
 print(imp)
+# Relativo ao primeiro elemento para deixar em escala de 0 a 1
+xgb.plot.importance(imp, rel_to_first = TRUE)
+
+# Salva o modelo treinado
+saveRDS(modelo, "exploracao/modelo-v-4-r.RDS")
