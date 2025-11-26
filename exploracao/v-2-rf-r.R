@@ -160,4 +160,4 @@ for (hrs in seq(min_hrs, max_hrs, step_hrs)) {
 cat("Tempo:", runtime_total)
 
 # Observação:
-# 22h
+# 20h

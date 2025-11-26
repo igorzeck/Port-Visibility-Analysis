@@ -293,7 +293,7 @@ df |>
              linetype = tipo_acuracia_total,
              color = tipo_acuracia_total)) +
   geom_line()
-# Análise: PRAticamente constante
+# Análise: Praticamente constante
 
 ## 5. Por tudo ----
 plot_ly(df,

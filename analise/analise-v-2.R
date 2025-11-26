@@ -18,9 +18,9 @@ print(tempo_total / 3600)
 # Tempo total de aproximadamente 13h
 
 print(nrow(df))
-# 120 modelos treinados
+# 99 modelos treinados
 
-# Tempo total de treino aproximadamente 56h (sem repetições)
+# Tempo total de treino aproximadamente 20h
 
 head(df)
 
@@ -98,7 +98,7 @@ tempo |>
 # Análise:
 # Crescimento perfeitamente linear!
 
-## 2. Acurácia de teste ----
+## 2. R² de teste ----
 df |> 
   slice_max(Rsquared_teste) |> 
   view()
