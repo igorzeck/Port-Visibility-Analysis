@@ -20,6 +20,7 @@ df <- read_csv("exploracao/T0-dataset-extendido-transf.csv") %>%
   mutate(clima = as.factor(clima))
 
 # ---- 3. XGBOOST ----
+tic(paste("Começando a treinar o modelo..."))
 set.seed(42)
 # Divisão do dataset
 idx <- createDataPartition(df$tipo_vis, p = 0.8, list = FALSE)
@@ -58,7 +59,7 @@ params <- list(
   objective = "multi:softprob",
   eval_metric = "mlogloss",
   num_class = length(levels(df_treino$tipo_vis)),
-  eta = 0.1,
+  eta = 0.08,
   max_depth = 5,  # Aparenta ter impacto negativo!
   subsample = 0.8,
   colsample_bytree = 0.8,
@@ -70,22 +71,72 @@ set.seed(42)
 modelo <- xgb.train(
   params = params,
   data = dtreino,
-  nrounds = 300, # Basicamente ntrees, mas com árvores que não são independetes
-  watchlist = list(train = dtreino, test = dteste),
+  nrounds = 1000, # Basicamente ntrees, mas com árvores que não são independetes
+  watchlist = list(treino = dtreino, teste = dteste),
   verbose = 1
 )
 
-# Predições
+# Para timer e pega tempo
+toc(log = TRUE, quiet = TRUE)
+log_list <- tic.log(format = FALSE)
+entry <- log_list[[length(log_list)]]
+runtime <- entry$toc - entry$tic
+tic.clearlog()
+
+# Tempo de treino do modelo
+cat(paste0(round(runtime,3),"s"))
+
+# modelo <- readRDS("exploracao/modelo-v-3-c.RDS")
+
+## Análise do modelo ----
+modelo
+
+### Log de treino ----
+# Mlogloss do treino e teste
+modelo$evaluation_log %>% 
+  ggplot() +
+  geom_line(aes(iter, train_mlogloss), colour = "blue") +
+  geom_line(aes(iter, test_mlogloss), color = "red")
+
+#### Predições ----
+# Treino
+# Lista de probabilidades de cada classe
+pred_prob <- predict(modelo, dtreino)
+length(pred_prob)
+# Separa em 4 colunas (uma matriz) com 'num_class' de colunas
+pred_prob <- matrix(pred_prob,
+                    ncol = params$num_class,
+                    byrow = TRUE)
+dim(pred_prob)
+# Pega a posição (coluna) com maior valor, linha a linha
+max.col(pred_prob)
+# Retira de cada valor (já que as classes começam com índice 0)
+pred_class <- max.col(pred_prob) - 1
+# Factoriza as classes de previsão utilizando os levels da alvo
+pred_factor <- factor(pred_class,
+                      labels = levels(df_treino$tipo_vis))
+
+# A acurácia de Névoa foi perfeita! Suspeito... Mas, faz sentido
+confusionMatrix(pred_factor, df_treino$tipo_vis)
+
+# Teste
 pred_prob <- predict(modelo, dteste)
-pred_prob <- matrix(pred_prob, ncol = params$num_class, byrow = TRUE)
+pred_prob <- matrix(pred_prob,
+                    ncol = params$num_class,
+                    byrow = TRUE)
 
 pred_class <- max.col(pred_prob) - 1
 pred_factor <- factor(pred_class,
                       labels = levels(df_treino$tipo_vis))
 
-# Matriz de confusão
+# Resultados mais sensíveis!
 confusionMatrix(pred_factor, df_teste$tipo_vis)
 
-# Importância
+#### Importância ----
 imp <- xgb.importance(model = modelo)
 print(imp)
+# Relativo ao primeiro para deixar em escala de 0 a 100
+xgb.plot.importance(imp, rel_to_first = TRUE)
+
+## Salva o modelo treinado ----
+saveRDS(modelo, "exploracao/modelo-v-3-c.RDS")
