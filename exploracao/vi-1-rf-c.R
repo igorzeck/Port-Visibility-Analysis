@@ -1,7 +1,7 @@
 # Modelo para RF-C XGBoost do relatório VI ----
 # Especifiações:
-#   - hrs: 1:24:1 - 24 iterações
-# Total de modelos: 12
+#   - hrs: 1:60:1 - 60 iterações
+# Total de modelos: 60
 # ---- 1. SETUP ----
 source("exploracao/libs.R")
 library(dplyr)
